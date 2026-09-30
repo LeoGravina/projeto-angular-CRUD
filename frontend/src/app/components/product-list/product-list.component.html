@@ -1,0 +1,87 @@
+<div class="page-header">
+  <h1>Estoque Leo Informática</h1>
+  <a routerLink="/novo" class="btn btn-primary">+ Novo produto</a>
+</div>
+
+<div class="kpis">
+  <button type="button" class="kpi" [class.kpi-selected]="isKpiActive('all')" (click)="applyKpi('all')">
+    <span class="kpi-label">Produtos</span>
+    <span class="kpi-value">{{ allProducts.length }}</span>
+    <span class="kpi-hint">mostrar todos</span>
+  </button>
+  <button type="button" class="kpi" [class.kpi-selected]="isKpiActive('active')" (click)="applyKpi('active')">
+    <span class="kpi-label">Valor em estoque</span>
+    <span class="kpi-value">{{ stockValue | currency:'BRL' }}</span>
+    <span class="kpi-hint">{{ activeCount }} produtos ativos</span>
+  </button>
+  <button type="button" class="kpi kpi-warn" [class.kpi-selected]="isKpiActive('low')" (click)="applyKpi('low')">
+    <span class="kpi-label">Estoque baixo</span>
+    <span class="kpi-value">{{ lowStockCount }}</span>
+    <span class="kpi-hint">1 a {{ LOW_STOCK }} unidades</span>
+  </button>
+  <button type="button" class="kpi kpi-danger" [class.kpi-selected]="isKpiActive('out')" (click)="applyKpi('out')">
+    <span class="kpi-label">Esgotados</span>
+    <span class="kpi-value">{{ outOfStockCount }}</span>
+    <span class="kpi-hint">sem unidades</span>
+  </button>
+</div>
+
+<div class="search">
+  <input
+    type="text"
+    [(ngModel)]="searchName"
+    (input)="load()"
+    placeholder="Buscar por nome ou SKU"
+  />
+  <select [(ngModel)]="searchStatus" (ngModelChange)="stockFilter = 'all'; load()" aria-label="Filtrar por status">
+    <option value="all">Todos os Status</option>
+    <option value="active">Apenas Ativos</option>
+    <option value="inactive">Apenas Inativos</option>
+  </select>
+</div>
+
+<ng-container *ngIf="visibleProducts.length; else empty">
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th class="sortable" (click)="sortBy('name')">Produto {{ sortIcon('name') }}</th>
+        <th class="sortable" (click)="sortBy('sku')">SKU {{ sortIcon('sku') }}</th>
+        <th class="sortable num" (click)="sortBy('price')">Preço {{ sortIcon('price') }}</th>
+        <th class="sortable num" (click)="sortBy('quantity')">Qtd. {{ sortIcon('quantity') }}</th>
+        <th class="sortable" (click)="sortBy('status')">Status {{ sortIcon('status') }}</th>
+      </tr>
+      <tr *ngFor="let p of pagedProducts" class="clickable" (click)="edit(p)">
+        <td>{{ p.name }}</td>
+        <td class="mono">{{ p.sku }}</td>
+        <td class="num">{{ p.price | currency:'BRL' }}</td>
+        <td class="num">
+          <span class="stock" [ngClass]="'stock-' + stockLevel(p)">
+            {{ p.quantity }}
+          </span>
+        </td>
+        <td>
+          <label class="switch" (click)="$event.stopPropagation()">
+            <input
+              type="checkbox"
+              [checked]="p.status"
+              (change)="toggleStatus(p, $event)"
+              [attr.aria-label]="'Alternar status de ' + p.name"
+            />
+            <span class="slider"></span>
+            <span class="switch-label">{{ p.status ? 'Ativo' : 'Inativo' }}</span>
+          </label>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button class="btn btn-secondary" (click)="goTo(page - 1)" [disabled]="page === 1">Anterior</button>
+    <span>Página {{ page }} de {{ totalPages }}</span>
+    <button class="btn btn-secondary" (click)="goTo(page + 1)" [disabled]="page === totalPages">Próxima</button>
+  </div>
+</ng-container>
+
+<ng-template #empty>
+  <div class="card empty-state">Nenhum produto encontrado.</div>
+</ng-template>

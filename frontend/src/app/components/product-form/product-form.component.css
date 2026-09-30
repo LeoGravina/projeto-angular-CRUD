@@ -1,0 +1,61 @@
+.field-error {
+  color: var(--danger-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.form-error {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.push-right {
+  margin-left: auto;
+}
+
+.confirm-delete {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--danger-soft);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.confirm-delete span {
+  flex: 1 1 100%;
+}
+
+/* centraliza título e cartão na página */
+:host {
+  display: block;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.page-header {
+  justify-content: center;
+  text-align: center;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
